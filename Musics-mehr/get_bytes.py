@@ -25,7 +25,7 @@ class ByteExtractingActions(ReadFiles):
 		A variable for each file to store and write 
 		in their corresponding files at the end
 		'''
-		self.total_bytes = 69
+		self.total_bytes = 0
 		self.source_file_str = self.get_source_file_str()
 		self.corrupt_status_urls = []
 		self.corrupt_byte_urls = []
