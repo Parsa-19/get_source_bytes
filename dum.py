@@ -1,10 +1,13 @@
-str_source = '''bitch1
-bitch2
-bitch3
-slut1
-slut2
-slut3
-'''
+import re
+import requests
 
-str_source = str_source.replace(f'bidsfsf', '')
-print(str_source)
+pattern = re.compile(r"^https://dl\.mehrdl\.top")
+
+with open("download_linnks.txt", "r") as f:
+    i = 0
+    for line in f:
+        url = line.strip()
+        if re.match(pattern, url):
+            i += 1
+
+    print(i)

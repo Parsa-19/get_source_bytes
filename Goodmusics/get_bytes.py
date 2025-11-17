@@ -142,16 +142,18 @@ def main(MAX_THREADS):
 
 	urls = reader.read_urls_as_list()
 
-	try:
-		with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
-			list(executor.map(byte_man.extraction_procedure, urls))
+	
 
-	except Exception as e:
-		print(f"\n[$]PARSA[$] main def exception:\n{e}\n")
+	# try:
+	# 	with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+	# 		list(executor.map(byte_man.extraction_procedure, urls))
 
-	finally:
-		result = byte_man.get_resault()
-		writer.write_result(result)
+	# except Exception as e:
+	# 	print(f"\n[$]PARSA[$] main def exception:\n{e}\n")
+
+	# finally:
+	# 	result = byte_man.get_resault()
+	# 	writer.write_result(result)
 
 
 if __name__ == '__main__':

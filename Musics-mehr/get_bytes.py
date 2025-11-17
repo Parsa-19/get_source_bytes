@@ -3,7 +3,7 @@ import concurrent.futures
 import json
 import urllib.request
 import time
-
+import re
 
 
 
@@ -57,24 +57,11 @@ class ByteExtractingActions(ReadFiles):
 
 
 	def extraction_procedure(self, url):
-		''' <psudo>
-		try:
-			make request
-			extract Byte
-			total_bytes += byte
-			remove the successfull byte extracted url from source file
-
-			log everything
-		
-		except:  
-			shows the exception and continue getting bytes
-
-		finally:
-			write the total_byte to [total_bytes.txt]
-		'''
-
 		url = url[:-1] # remove the \n
 
+		if not self.url_is_mehrdl(url):
+			return 0
+			
 		resp = requests.get(url, stream=True)
 		if resp.status_code != 200:
 			self.add_url_to_corrupt_status_urls(url)
@@ -93,15 +80,22 @@ class ByteExtractingActions(ReadFiles):
 		self.remove_url_from_source_str(url)
 		self.prettified_url_report(url, byte)
 		self.counter += 1 
-		time.sleep(2)
+		# time.sleep(1)
 		
 	def get_resault(self):
 		return {
-		'total_bytes': self.total_bytes, 
-		'source_file_str': self.source_file_str, 
-		'corrupt_status_urls': self.corrupt_status_urls, 
-		'corrupt_byte_urls': self.corrupt_byte_urls
+			'total_bytes': self.total_bytes, 
+			'source_file_str': self.source_file_str, 
+			'corrupt_status_urls': self.corrupt_status_urls, 
+			'corrupt_byte_urls': self.corrupt_byte_urls
 		}
+
+	def url_is_mehrdl(self, url) -> bool: # main download source for musics-mehr is from "https://dl.mehrdl.top"
+		pattern = re.compile(r"^https://dl\.mehrdl\.top")
+		if re.match(pattern, url):
+			return True
+		return False
+
 
 class WriteFiles():
 
@@ -141,7 +135,6 @@ def main(MAX_THREADS):
 	byte_man = ByteExtractingActions()
 
 	urls = reader.read_urls_as_list()
-
 	try:
 		with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
 			list(executor.map(byte_man.extraction_procedure, urls))
@@ -163,4 +156,4 @@ if __name__ == '__main__':
 	by each successfull byte extraction from url; that url will be removed from the "goodmusics_downloads.txt" so refill it from the "downloads_links_backup"
 	the result is in total_bytes.txt so empty that as well too.
 	'''	
-	main(MAX_THREADS=2)
+	main(MAX_THREADS=8)
